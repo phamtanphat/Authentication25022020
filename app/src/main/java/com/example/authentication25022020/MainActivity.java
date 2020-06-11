@@ -60,5 +60,26 @@ public class MainActivity extends AppCompatActivity {
                         });
             }
         });
+
+        mBtnDangnhap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = mEdtEmail.getText().toString();
+                String password = mEdtPass.getText().toString();
+
+                mAuth.signInWithEmailAndPassword(email,password)
+                        .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()){
+                                    Toast.makeText(MainActivity.this, "Dang nhap thanh cong", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Log.d("BBB",task.getException().getMessage());
+                                    Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        });
     }
 }
