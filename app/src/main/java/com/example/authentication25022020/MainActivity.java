@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
             mBtnCapNhatThongTin,
             mBtnResetMk, mBtnXacThuc;
     FirebaseAuth mAuth;
+
     // mail ao : android2502@yopmail.com
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +54,10 @@ public class MainActivity extends AppCompatActivity {
                         .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     Toast.makeText(MainActivity.this, "Dang ky thanh cong", Toast.LENGTH_SHORT).show();
-                                }else{
-                                    Log.d("BBB",task.getException().getMessage());
+                                } else {
+                                    Log.d("BBB", task.getException().getMessage());
                                     Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -70,14 +71,14 @@ public class MainActivity extends AppCompatActivity {
                 String email = mEdtEmail.getText().toString();
                 String password = mEdtPass.getText().toString();
 
-                mAuth.signInWithEmailAndPassword(email,password)
+                mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     Toast.makeText(MainActivity.this, "Dang nhap thanh cong", Toast.LENGTH_SHORT).show();
-                                }else{
-                                    Log.d("BBB",task.getException().getMessage());
+                                } else {
+                                    Log.d("BBB", task.getException().getMessage());
                                     Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                     boolean emailVerified = user.isEmailVerified();
                     String uid = user.getUid();
                     Toast.makeText(MainActivity.this, "Name : " + name + "\n" + "email : " + email, Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     Toast.makeText(MainActivity.this, "User khong ton tai", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 FirebaseUser user = mAuth.getCurrentUser();
-                if (user != null){
+                if (user != null) {
                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                             .setDisplayName("Android 2502")
                             .setPhotoUri(Uri.parse("https://cellphones.com.vn/sforum/wp-content/uploads/2020/05/android_logo_stacked__rgb_.5.jpg"))
@@ -118,16 +119,61 @@ public class MainActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(MainActivity.this, "Cap nhat thanh cong", Toast.LENGTH_SHORT).show();
-                                    }else{
-                                        Log.d("BBB",task.getException().getMessage());
+                                    } else {
+                                        Log.d("BBB", task.getException().getMessage());
                                         Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
                 }
-
-
             }
         });
+
+        mBtnResetMk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseUser user = mAuth.getCurrentUser();
+                if (user != null) {
+                    mAuth.sendPasswordResetEmail(user.getEmail())
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(MainActivity.this, "Gui email cap nhat password thanh cong", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Log.d("BBB", task.getException().getMessage());
+                                        Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+            }
+        });
+        mBtnXacThuc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                FirebaseUser user = auth.getCurrentUser();
+
+                user.sendEmailVerification()
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(MainActivity.this, "Gui email xac thuc thanh cong", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Log.d("BBB", task.getException().getMessage());
+                                    Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        FirebaseAuth.getInstance().signOut();
     }
 }
